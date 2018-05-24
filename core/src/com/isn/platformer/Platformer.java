@@ -2,12 +2,13 @@ package com.isn.platformer;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.isn.platformer.Screens.MenuScreen;
 import com.isn.platformer.Screens.PlayScreen;
 
 public class Platformer extends Game {
 	//Taille de l'écran
-	public static final int SCREEN_WIDTH = 400;
-	public static final int SCREEN_HEIGHT = 208;
+	public static final int SCREEN_WIDTH = 500;
+	public static final int SCREEN_HEIGHT = 320;
 	
 	//Echelle pour Box2D
 	public static final float SCALE = 100;
@@ -33,7 +34,7 @@ public class Platformer extends Game {
 
 	public void create () {
 		batch = new SpriteBatch();
-		setScreen(new PlayScreen(this, 6));
+		setScreen(new PlayScreen(this, 1));
 	}
 
 	@Override

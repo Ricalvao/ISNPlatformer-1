@@ -137,6 +137,7 @@ public class PlayScreen implements Screen{
             	restart = true;
             }
         }
+        	
     }
 
     public void update(float dt){
@@ -219,9 +220,7 @@ public class PlayScreen implements Screen{
     }
 
     public void resize(int width, int height) {
-        //updated our game viewport
         gamePort.update(width,height);
-
     }
 
     public TiledMap getMap(){
