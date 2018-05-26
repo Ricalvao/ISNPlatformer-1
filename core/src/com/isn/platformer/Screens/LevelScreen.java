@@ -60,7 +60,7 @@ public class LevelScreen implements Screen {
     	//L'ecran n'affiche le message que pendant une seconde, après le niveau commence
     	if(timer > 1f) {
     		if(level > 6) {
-    			System.exit(0);
+    			game.setScreen(new MenuScreen((Platformer) game));
                 dispose();
     		} else {
     			game.setScreen(new PlayScreen((Platformer) game, level));

@@ -5,7 +5,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.isn.platformer.Screens.LevelScreen;
+import com.isn.platformer.Screens.MenuScreen;
 
 public class Platformer extends Game {
 	//Taille de l'écran
@@ -50,6 +50,7 @@ public class Platformer extends Game {
 		manager.load("audio/music/still_alive.ogg", Music.class);
 		manager.load("audio/sounds/death.wav", Sound.class);
 		manager.load("audio/sounds/laser.wav", Sound.class);
+		manager.load("audio/sounds/gun.wav", Sound.class);
 
 		manager.finishLoading();
 		
@@ -57,7 +58,7 @@ public class Platformer extends Game {
 		sound = true;
 		
 		//On affiche le premier niveau
-		setScreen(new LevelScreen(this, 1));
+		setScreen(new MenuScreen(this));
 	}
 
 	@Override

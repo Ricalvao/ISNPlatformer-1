@@ -9,16 +9,16 @@ import com.isn.platformer.Screens.PlayScreen;
 public class RedGel extends InteractiveTileObject{
 	private static TiledMapTileSet tileSet;
 	//Les differentes textures
-    private final int FLOOR_OFF = 36;
-    private final int FLOOR_ON = 69;
-    private final int R_WALL_OFF = 37;
-    private final int R_WALL_ON = 70;
-    private final int L_WALL_OFF = 38;
-    private final int L_WALL_ON = 71;
-    private final int L_CORNER_OFF = 39;
-    private final int L_CORNER_ON = 72;
-    private final int R_CORNER_OFF = 40;
-    private final int R_CORNER_ON = 73;
+    private final int FLOOR_OFF = 27;
+    private final int FLOOR_ON = 51;
+    private final int R_WALL_OFF = 28;
+    private final int R_WALL_ON = 52;
+    private final int L_WALL_OFF = 29;
+    private final int L_WALL_ON = 53;
+    private final int L_CORNER_OFF = 30;
+    private final int L_CORNER_ON = 54;
+    private final int R_CORNER_OFF = 31;
+    private final int R_CORNER_ON = 55;
 
     public RedGel(PlayScreen screen, MapObject object){
         super(screen, object);

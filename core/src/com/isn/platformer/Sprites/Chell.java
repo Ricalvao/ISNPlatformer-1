@@ -245,7 +245,9 @@ public class Chell extends Sprite{
     }
     
     public void arm(){
-    	//Quand le personnage attrappe une arme on change les textures
+    	if(Platformer.sound)
+    		Platformer.manager.get("audio/sounds/gun.wav", Sound.class).play();
+    	//Quand le personnage attrape une arme on change les textures
         Array<TextureRegion> frames = new Array<TextureRegion>();
         for(int i = 1; i < 4; i++)
         	frames.add(new TextureRegion(new Texture("sprites\\gun_run_" + i + ".png")));
@@ -256,6 +258,8 @@ public class Chell extends Sprite{
         dead = new TextureRegion(new Texture("sprites\\gun_dead.png"));
         
         armed = true;
+        
+        screen.getHud().showSpace(true);
     }
     
     public boolean isArmed() {

@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.isn.platformer.Platformer;
+import com.isn.platformer.Scenes.Hud;
 import com.isn.platformer.Sprites.Chell;
 import com.isn.platformer.Sprites.Cube;
 import com.isn.platformer.Sprites.Enemy;
@@ -22,14 +23,17 @@ import com.isn.platformer.TileObjects.BlueGel;
 import com.isn.platformer.TileObjects.Path;
 import com.isn.platformer.Tools.WorldContactListener;
 import com.isn.platformer.Tools.WorldCreator;
+import com.isn.platformer.Screens.MenuScreen;
 
 public class PlayScreen implements Screen{
 	private Platformer game;
 	public int level;
 	private boolean restart;
+	private boolean goToMenu;
 
     private OrthographicCamera gamecam;
     private Viewport gamePort;
+    private Hud hud;
 
     //Tiled variables
     private TiledMap map;
@@ -51,7 +55,7 @@ public class PlayScreen implements Screen{
     	this.game = game;
     	this.level = level;
     	restart = false;
-    	
+    	goToMenu = false;
         //On crée le caméra qui va suivre le personnage
         gamecam = new OrthographicCamera();
 
@@ -75,6 +79,8 @@ public class PlayScreen implements Screen{
 
         //On crée le personnage
         player = new Chell(this);
+        
+        hud = new Hud(game.batch, player);
 
         //On crée le contact listener
         world.setContactListener(new WorldContactListener());
@@ -148,6 +154,10 @@ public class PlayScreen implements Screen{
             	restart = true; //R pour recommencer le niveau
             }
         }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+        	goToMenu = true;
+        }
         	
     }
 
@@ -170,7 +180,9 @@ public class PlayScreen implements Screen{
         	paths.update(dt);
         }
         if(creator.gun !=null)
-        	creator.gun.update(dt);;
+        	creator.gun.update(dt);
+        
+        getHud().update(dt);
 
         //Le caméra suit le personnage dans l'axe x
         if(player.currentState != Chell.State.DEAD) {
@@ -209,13 +221,20 @@ public class PlayScreen implements Screen{
         if(creator.gun !=null)
         	creator.gun.draw(game.batch);
         game.batch.end();
-        
+
+        game.batch.setProjectionMatrix(getHud().stage.getCamera().combined);
+        getHud().stage.draw();
+
         //Recommencer le niveau ou passer au niveau suivant
         if(restart()){
         	game.setScreen(new PlayScreen((Platformer) game, level));
             dispose();
         } else if(nextLevel()){
         	game.setScreen(new LevelScreen((Platformer) game, level + 1));
+            music.stop();
+            dispose();
+        } else if(goToMenu){
+        	game.setScreen(new MenuScreen((Platformer) game));
             music.stop();
             dispose();
         }
@@ -270,5 +289,10 @@ public class PlayScreen implements Screen{
         renderer.dispose();
         world.dispose();
         b2dr.dispose();
+        getHud().dispose();
     }
+
+	public Hud getHud() {
+		return hud;
+	}
 }

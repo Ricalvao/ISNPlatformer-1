@@ -30,16 +30,16 @@ public class Path extends InteractiveTileObject{
         tiles = getCells();
         
         //Les textures, qui se trouvent dans le tileSet du niveau, dépendent de l'orientation de l'objet
-        sourceOff = w > 1 ? 67 : 101;
-        sourceOn = w > 1 ? 68 : 100;
-        pathOff = w > 1 ? 43 : 34;
-        pathOn = w > 1 ? 35 : 43;
+        sourceOff = w > 1 ? 49 : 74;
+        sourceOn = w > 1 ? 50 : 73;
+        pathOff = w > 1 ? 34 : 25;
+        pathOn = w > 1 ? 26 : 34;
     }
     
     public void update(float dt) {
-    	//Si la source du pont touche un gel rouge activé le pont s'active aussi
-    	//Les textures du gel rouge activé se trouvent entre le tile 69 et 73 du tileset
-    	if(getSource().getTile().getId() >= 69 && getSource().getTile().getId() <= 73) { 
+    	//Si la source du pont touche un gel rouge activé le pont s'active
+    	//Les textures du gel rouge activé se trouvent entre le tile 51 et 55 du tileset
+    	if(getSource().getTile().getId() >= 51 && getSource().getTile().getId() <= 55) { 
     		turnOnOff(true);
     	} else {
     		turnOnOff(false);
