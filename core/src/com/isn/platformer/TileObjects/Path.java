@@ -18,11 +18,18 @@ public class Path extends InteractiveTileObject{
         super(screen, object);
         tileSet = map.getTileSets().getTileSet("Tileset");
         fixture.setUserData(this);
+        
+        //Si le pont est orienté horizontalement
         if(w > 1)
         	setCategoryFilter(Platformer.NOTHING_BIT);
+        //Si'il est orienté verticalement
         else
         	setCategoryFilter(Platformer.GROUND_BIT);
+        
+        //On obtient les tiles qui correspondent à l'objet
         tiles = getCells();
+        
+        //Les textures, qui se trouvent dans le tileSet du niveau, dépendent de l'orientation de l'objet
         sourceOff = w > 1 ? 67 : 101;
         sourceOn = w > 1 ? 68 : 100;
         pathOff = w > 1 ? 43 : 34;
@@ -30,7 +37,9 @@ public class Path extends InteractiveTileObject{
     }
     
     public void update(float dt) {
-    	if(getSource().getTile().getId() >= 69 && getSource().getTile().getId() <= 73) {
+    	//Si la source du pont touche un gel rouge activé le pont s'active aussi
+    	//Les textures du gel rouge activé se trouvent entre le tile 69 et 73 du tileset
+    	if(getSource().getTile().getId() >= 69 && getSource().getTile().getId() <= 73) { 
     		turnOnOff(true);
     	} else {
     		turnOnOff(false);
@@ -39,7 +48,7 @@ public class Path extends InteractiveTileObject{
     
 
     public void turnOnOff(boolean b) {
-    	
+    	//On change les textures en accord avec l'état courrant du pont
     	if(b) {
         	for(int i = 0; i < tiles.length; i++) {
         		if(tiles[i].getTile().getId() == sourceOff) {

@@ -3,6 +3,7 @@ package com.isn.platformer.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -30,47 +31,62 @@ public class PlayScreen implements Screen{
     private OrthographicCamera gamecam;
     private Viewport gamePort;
 
-    //Tiled map variables
+    //Tiled variables
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
 
-    //Box2d variables
+    //Box2D variables
     private World world;
     private Box2DDebugRenderer b2dr;
     public WorldCreator creator;
 
-    //sprites
+    //Sprites
     private Chell player;
+    
+    //Musique
+    private Music music;
 
     public PlayScreen(Platformer game, int level){
 
     	this.game = game;
     	this.level = level;
     	restart = false;
-        //create cam used to follow mario through cam world
+    	
+        //On crée le caméra qui va suivre le personnage
         gamecam = new OrthographicCamera();
 
-        //create a FitViewport to maintain virtual aspect ratio despite screen size
+        //Le FitViewport permet de mantenir les proportions de l'image lorsque la taille de la fenetre change
         gamePort = new FitViewport(Platformer.SCREEN_WIDTH / Platformer.SCALE, Platformer.SCREEN_HEIGHT / Platformer.SCALE, gamecam);
 
-        //Load our map and setup our map renderer
+        //On charge le niveau
         map = new TmxMapLoader().load("levels//test" + level + ".tmx");
         renderer = new OrthogonalTiledMapRenderer(map, 1 / Platformer.SCALE);
 
-        //initially set our gamcam to be centered correctly at the start of of map
+        //On positionne le caméra au début du niveau
         gamecam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2, 0);
 
-        //create our Box2D world, setting no gravity in X, -10 gravity in Y, and allow bodies to sleep
+        //On crée un monde Box2D pour pouvoir créer des corps dedans
         world = new World(new Vector2(0, -10), true);
-        //allows for debug lines of our box2d world.
+        
         b2dr = new Box2DDebugRenderer();
 
+        //On crée tous les corps nécessaires dans le monde
         creator = new WorldCreator(this);
 
-        //create mario in our game world
+        //On crée le personnage
         player = new Chell(this);
 
+        //On crée le contact listener
         world.setContactListener(new WorldContactListener());
+        
+        //On joue la musique
+        music = Platformer.manager.get("audio/music/portal_radio.ogg", Music.class);
+        music.setLooping(true);
+        if(Platformer.music)
+        	music.setVolume(0.3f);
+        else
+        	music.setVolume(0);
+        music.play();
     }
 
     public void show() {
@@ -78,23 +94,24 @@ public class PlayScreen implements Screen{
     }
 
     public void handleInput(float dt){
-        //control our player using immediate impulses
+        //Le personnage est controllé par des forces
         if(player.currentState != Chell.State.DEAD) {
             
         	if (Gdx.input.isKeyJustPressed(Input.Keys.UP))
                 player.jump();
         	
         	if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
-                player.fire();
+        		if(player.isArmed()) //Si le personnae est armée il tire des lasers
+        			player.fire();
         	
             if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
             	for (BlueGel blueGel : creator.getBlueGels())
             		if(blueGel.getBounciness() != 1.2f)
-                    	blueGel.setBounciness(1.2f);
+                    	blueGel.setBounciness(1.2f); //On saute plus haut sur le gel bleu si on appuie sur la touche HAUT
             } else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
             	for (BlueGel blueGel : creator.getBlueGels())
                     if(blueGel.getBounciness() != 0.5f)
-                    	blueGel.setBounciness(0.5f);
+                    	blueGel.setBounciness(0.5f); //On saute moins haut sur le gel bleu si on appuie sur la touche BAS
             } else {
             	for (BlueGel blueGel : creator.getBlueGels())
                     if(blueGel.getBounciness() != 1f)
@@ -102,6 +119,7 @@ public class PlayScreen implements Screen{
             }
             
             if(player.orange) {
+            	//Le personnage coure plus vite sur le gel orange
             	if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.body.getLinearVelocity().x <= 6) {
             		player.body.applyLinearImpulse(new Vector2(0.4f, 0), player.body.getWorldCenter(), true);
         			player.lookRight(true);
@@ -112,41 +130,35 @@ public class PlayScreen implements Screen{
             		player.lookRight(false);
             	}
             	
-            } else if(player.green){
-            	if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.body.getLinearVelocity().y <= .5f) {
-            		player.body.applyLinearImpulse(new Vector2(0, .5f), player.body.getWorldCenter(), true);
-            		player.lookRight(true);
-            	}
-            	
-            	if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.body.getLinearVelocity().y <= .5f) {
-            		player.body.applyLinearImpulse(new Vector2(0, .5f), player.body.getWorldCenter(), true);
-            		player.lookRight(false);
-            	}
             } else {
-            	if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.body.getLinearVelocity().x <= 2) {
-            		player.body.applyLinearImpulse(new Vector2(0.1f, 0), player.body.getWorldCenter(), true);
+            	if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            		if(player.green && player.body.getLinearVelocity().y <= .5f) //Le personnage peut escalader le gel vert
+                    	player.body.applyLinearImpulse(new Vector2(0, .5f), player.body.getWorldCenter(), true);
+                    else if (player.body.getLinearVelocity().x <= 1.5f)
+                    	player.body.applyLinearImpulse(new Vector2(0.1f, 0), player.body.getWorldCenter(), true);
             		player.lookRight(true);
             	}
             	
-            	if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.body.getLinearVelocity().x >= -2) {
+            	if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.body.getLinearVelocity().x >= -1.5f) {
             		player.body.applyLinearImpulse(new Vector2(-0.1f, 0), player.body.getWorldCenter(), true);
             		player.lookRight(false);
             	}
             }
             if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
-            	restart = true;
+            	restart = true; //R pour recommencer le niveau
             }
         }
         	
     }
 
     public void update(float dt){
-        //handle user input first
+        //On gère les instructions de l'utilisateur
         handleInput(dt);
 
-        //takes 1 step in the physics simulation(60 times per second)
+        //60 frames par seconde
         world.step(1 / 60f, 6, 2);
-
+        
+        //On met les corps à jour dans le monde
         player.update(dt);
         for(Enemy enemy : creator.getEnemies()) {
             enemy.update(dt);
@@ -157,15 +169,15 @@ public class PlayScreen implements Screen{
         for(Path paths : creator.getPaths()) {
         	paths.update(dt);
         }
+        if(creator.gun !=null)
+        	creator.gun.update(dt);;
 
-        //attach our gamecam to our players.x coordinate
+        //Le caméra suit le personnage dans l'axe x
         if(player.currentState != Chell.State.DEAD) {
             gamecam.position.x = player.body.getPosition().x;
         }
-
-        //update our gamecam with correct coordinates after changes
         gamecam.update();
-        //tell our renderer to draw only what our camera can see in our game world.
+        //On affiche ce que le caméra voit
         renderer.setView(gamecam);
 
     }
@@ -173,39 +185,45 @@ public class PlayScreen implements Screen{
 
     @Override
     public void render(float delta) {
-        //separate our update logic from render
+        //On fait les mises à jour dans une autre fonction
         update(delta);
 
-        //Clear the game screen with Black
+        //On nettoye l'écran et on met un fond noir
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        //render our game map
+        //On affiche le niveau 
         renderer.render();
 
-        //renderer our Box2DDebugLines
         //b2dr.render(world, gamecam.combined);
 
         game.batch.setProjectionMatrix(gamecam.combined);
+
+        //On dessine les sprites
         game.batch.begin();
         player.draw(game.batch);
         for (Enemy enemy : creator.getEnemies())
             enemy.draw(game.batch);
         for (Cube cube : creator.getCubes())
             cube.draw(game.batch);
+        if(creator.gun !=null)
+        	creator.gun.draw(game.batch);
         game.batch.end();
-
+        
+        //Recommencer le niveau ou passer au niveau suivant
         if(restart()){
         	game.setScreen(new PlayScreen((Platformer) game, level));
             dispose();
         } else if(nextLevel()){
-        	game.setScreen(new PlayScreen((Platformer) game, level + 1));
+        	game.setScreen(new LevelScreen((Platformer) game, level + 1));
+            music.stop();
             dispose();
         }
 
 	}
 
     public boolean restart(){
+    	//Si le personnage est mort depuis 2 secondes le niveau recommence
         if((player.currentState == Chell.State.DEAD && player.getStateTimer() > 2) || restart){
             return true;
         }
@@ -213,6 +231,7 @@ public class PlayScreen implements Screen{
     }
     
     public boolean nextLevel(){
+    	//Si le personnage arrive à la fin du niveau on passe au niveau suivant
         if(player.goal){
             return true;
         }
@@ -247,7 +266,6 @@ public class PlayScreen implements Screen{
 
     @Override
     public void dispose() {
-        //dispose of all our opened resources
         map.dispose();
         renderer.dispose();
         world.dispose();

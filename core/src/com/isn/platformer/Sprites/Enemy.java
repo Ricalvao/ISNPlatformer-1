@@ -32,13 +32,15 @@ public class Enemy extends Sprite{
         setPosition(x, y);
         defineEnemy();
         
-        velocity = new Vector2(-1, -2);
+        velocity = new Vector2(-1, -2); //Vitesse initiale
         
+        //Textures
         frames = new Array<TextureRegion>();
         for(int i = 1; i < 3; i++) {
             frames.add(new TextureRegion(new Texture("sprites//blob_" + i + ".png")));
         }
         walkAnimation = new Animation<TextureRegion>(0.4f, frames);
+        
         stateTime = 0;
         setBounds(getX(), getY(), 16 / Platformer.SCALE, 16 / Platformer.SCALE);
         setToDestroy = false;
@@ -46,6 +48,7 @@ public class Enemy extends Sprite{
     }
 
     public void reverseVelocity(boolean x, boolean y){
+    	//Foction pour changer la direction
         if(x)
             velocity.x = -velocity.x;
         if(y)
@@ -57,7 +60,7 @@ public class Enemy extends Sprite{
         if(setToDestroy && !destroyed){
             world.destroyBody(body);
             destroyed = true;
-        }else if(!destroyed) {
+        } else if(!destroyed) {
             body.setLinearVelocity(velocity);
             setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
             setRegion(walkAnimation.getKeyFrame(stateTime, true));
@@ -94,7 +97,7 @@ public class Enemy extends Sprite{
     }
     
     public void draw(Batch batch){
-        if(!destroyed || stateTime < 1)
+        if(!destroyed)
             super.draw(batch);
     }
 }

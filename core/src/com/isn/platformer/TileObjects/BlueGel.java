@@ -11,8 +11,8 @@ public class BlueGel extends InteractiveTileObject{
         super(screen, object);
         fixture.setUserData(this);
         setCategoryFilter(Platformer.BLUE_GEL_BIT);
-        bounciness = 1f;
-        body.getFixtureList().get(0).setRestitution(bounciness);
+        bounciness = 1f; 
+        body.getFixtureList().get(0).setRestitution(bounciness);//Le personnage rebondit sur le gel bleu
     }
     
     public void setBounciness(float f) {

@@ -8,6 +8,7 @@ import com.isn.platformer.Screens.PlayScreen;
 
 public class RedGel extends InteractiveTileObject{
 	private static TiledMapTileSet tileSet;
+	//Les differentes textures
     private final int FLOOR_OFF = 36;
     private final int FLOOR_ON = 69;
     private final int R_WALL_OFF = 37;
@@ -27,10 +28,9 @@ public class RedGel extends InteractiveTileObject{
     }
 
     public void turnOnOff(boolean b) {
-    	
+    	//On change les textures en accord avec l'état courrant du gel
     	TiledMapTileLayer.Cell[] tiles = getCells();
-    	
-        if(b) {
+    	if(b) {
         	for(int i = 0; i < tiles.length; i++) {
         		
         		if(tiles[i].getTile().getId() == FLOOR_OFF) {

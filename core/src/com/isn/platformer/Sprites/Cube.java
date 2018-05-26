@@ -35,6 +35,7 @@ public class Cube extends Sprite{
         setPosition(x, y);
         defineCube();
         
+        //La texture du cube dépend s'il est activé ou pas
         cube = on ? new TextureRegion(new Texture("sprites//cube_2.png")) : new TextureRegion(new Texture("sprites//cube_1.png"));
         setBounds(getX(), getY(), 16 / Platformer.SCALE, 16 / Platformer.SCALE);
         setRegion(cube);
@@ -46,12 +47,14 @@ public class Cube extends Sprite{
 
     public void update(float dt){
     	
+    	//S'il est activé pendant 5 secondes il se désactive
         if(on && timer > 5 && !done)
         	turnOnOff = true;
         
     	if(turnOnOff && !done) {
-    		
+    		//Quand il se désactive/active le corps est détruit
     		world.destroyBody(body);
+    		//Après un nouveau cube est créé
     		if(!on)
     			this.screen.creator.cubes.add(new Cube(screen, body.getPosition().x, body.getPosition().y, true));
             if(on)
@@ -80,6 +83,7 @@ public class Cube extends Sprite{
         square.setAsBox(7.5f / Platformer.SCALE, 7.5f / Platformer.SCALE);
 
         fdef.shape = square;
+        //Le bit de collision dépend de l'état du cube
         fdef.filter.categoryBits =  on ? Platformer.POWER_BIT : Platformer.OBJECT_BIT;
         fdef.filter.maskBits = Platformer.GROUND_BIT |
 				               Platformer.ENEMY_BIT |

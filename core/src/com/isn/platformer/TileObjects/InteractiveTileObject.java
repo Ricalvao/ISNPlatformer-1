@@ -15,7 +15,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.isn.platformer.Platformer;
 import com.isn.platformer.Screens.PlayScreen;
 
-public abstract class InteractiveTileObject {
+public abstract class InteractiveTileObject { //Les Gels et les Ponts sont des Objets Interactifs
 	protected World world;
 	protected TiledMap map;
     protected Rectangle bounds;
@@ -34,9 +34,9 @@ public abstract class InteractiveTileObject {
         this.world = screen.getWorld();
         this.map = screen.getMap();
         this.bounds = ((RectangleMapObject) object).getRectangle();
-        layer = (TiledMapTileLayer) map.getLayers().get(1);
-        w = (int)bounds.getWidth() /16;
-        h= (int)bounds.getHeight() /16;
+        layer = (TiledMapTileLayer) map.getLayers().get(1); //Couche du niveau ou se trouve les textures de l'objet
+        w = (int)bounds.getWidth() /16; //Largeur de l'objet
+        h= (int)bounds.getHeight() /16; //Hauteur de l'objet
 
         BodyDef bdef = new BodyDef();
         FixtureDef fdef = new FixtureDef();
@@ -54,14 +54,17 @@ public abstract class InteractiveTileObject {
     }
 
     public void setCategoryFilter(short filterBit){
+    	//Foction pour changer le bit de collision
         Filter filter = new Filter();
         filter.categoryBits = filterBit;
         fixture.setFilterData(filter);
     }
 
     public TiledMapTileLayer.Cell[] getCells(){
+    	//Fonction pour trouver les textures de l'objet
         TiledMapTileLayer.Cell[] tiles;
 	        
+        //Si l'objet est horizontal
         if(w > 1) {
         	tiles = new TiledMapTileLayer.Cell[w];
 	        
@@ -69,7 +72,8 @@ public abstract class InteractiveTileObject {
         		tiles[i] = layer.getCell((int)(body.getPosition().x * Platformer.SCALE / 16 - w/2 + i), (int)(body.getPosition().y * Platformer.SCALE / 16));
         	}
         	return tiles;
-        } else {
+        //Si l'objet est vertical
+        } else { 
         	tiles = new TiledMapTileLayer.Cell[h];
 	        
         	for(int i = 0; i < h; i++) {
@@ -81,6 +85,7 @@ public abstract class InteractiveTileObject {
     
 
     public TiledMapTileLayer.Cell getSource() {
+    	//Fonction pour trouver le premier tile de l'objet
     	if(w > 1) {
         	return layer.getCell((int)(body.getPosition().x * Platformer.SCALE / 16 - w/2 - 1), (int)(body.getPosition().y * Platformer.SCALE / 16));
         } else {

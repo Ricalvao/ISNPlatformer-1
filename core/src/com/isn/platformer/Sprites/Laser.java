@@ -51,11 +51,14 @@ public class Laser extends Sprite{
 		        			   Platformer.ENEMY_BIT |
 		        			   Platformer.OBJECT_BIT|
 	                           Platformer.POWER_BIT;
-        fdef.density = 10;
+        //Avec une faible densité le laser n'affecte pas beaucoup les autres corps dynamiques
+        fdef.density = 10; 
 
         fdef.shape = shape;
         body.createFixture(fdef).setUserData(this);
+        //La direction dépend du personnage
         body.setLinearVelocity(new Vector2(fireRight ? 4 : -4, 0f));
+        //Le laser n'est pas affecté par la gravité
         body.setGravityScale(0);
     }
 
@@ -63,6 +66,7 @@ public class Laser extends Sprite{
         stateTime += dt;
         setRegion(laser);
         setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
+        //Le laser existe pendant 3 secondes avant d'être détruit
         if((stateTime > 3 || setToDestroy) && !destroyed) {
             world.destroyBody(body);
             destroyed = true;

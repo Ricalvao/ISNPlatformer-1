@@ -1,9 +1,11 @@
 package com.isn.platformer;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.isn.platformer.Screens.MenuScreen;
-import com.isn.platformer.Screens.PlayScreen;
+import com.isn.platformer.Screens.LevelScreen;
 
 public class Platformer extends Game {
 	//Taille de l'écran
@@ -27,19 +29,41 @@ public class Platformer extends Game {
 	public static final short POWER_BIT = 512;
 	public static final short GOAL_BIT = 1024;
 	public static final short PURPLE_GEL_BIT = 2048;
-	public static final short CHELL_HANDS_BIT = 4096;
-	public static final short GREEN_GEL_BIT = 8192;
+	public static final short GREEN_GEL_BIT = 4096;
+	public static final short CHELL_HANDS_BIT = 8192;
+	public static final short GUN_BIT = 16384;
 
 	public SpriteBatch batch;
+	
+	public static AssetManager manager;
+	
+	//La musique et les sons sont activés par défaut
+	public static boolean music;
+	public static boolean sound;
 
 	public void create () {
 		batch = new SpriteBatch();
-		setScreen(new PlayScreen(this, 1));
+		
+		//On charge les fichiers audio
+		manager = new AssetManager();
+		manager.load("audio/music/portal_radio.ogg", Music.class);
+		manager.load("audio/music/still_alive.ogg", Music.class);
+		manager.load("audio/sounds/death.wav", Sound.class);
+		manager.load("audio/sounds/laser.wav", Sound.class);
+
+		manager.finishLoading();
+		
+		music = true;
+		sound = true;
+		
+		//On affiche le premier niveau
+		setScreen(new LevelScreen(this, 1));
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
+		manager.dispose();
 		batch.dispose();
 	}
 
