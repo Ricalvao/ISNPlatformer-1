@@ -277,7 +277,9 @@ public class Chell extends Sprite{
     public void draw(Batch batch){
         super.draw(batch);
         for(Laser ball : lasers)
-            ball.draw(batch);
+        	try {
+        		ball.draw(batch);
+        	} catch(java.lang.NullPointerException e) {}
     }
     
     public void lookRight(boolean b) {

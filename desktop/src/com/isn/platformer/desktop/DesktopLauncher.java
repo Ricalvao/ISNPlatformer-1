@@ -1,4 +1,4 @@
-package com.isn.platformer.desktop;
+ package com.isn.platformer.desktop;
 
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
@@ -12,6 +12,9 @@ public class DesktopLauncher {
 		//On définit la taille de la fenêtre
 		config.width = Platformer.SCREEN_WIDTH * 2;
 		config.height = Platformer.SCREEN_HEIGHT * 2;
+		
+		//Le menu ne marche pas quand la fenêtre change de taille
+		config.resizable = false;
 
 		//On affiche une image dans la fenêtre
 		config.addIcon("sprites//stand.png", Files.FileType.Internal);
